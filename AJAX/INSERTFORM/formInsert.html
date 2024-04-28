@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>AJAX Insert Example</title>
+    <script src="../jq.js"></script>
+</head>
+
+<body>
+    <h2>Insert Data into Database</h2>
+
+    <form id="insertForm" method="post">
+        Name: <input type="text" id="name" name="name" required>
+        ID: <input type="text" id="ID" name="id" required>
+        <button type="submit" id="insertBtn">Insert</button>
+    </form>
+
+    <h2>Inserted Records</h2>
+    <div id="records"></div>
+    <script>
+        $(document).ready(function () {
+            // Insert Data into Database
+            $('#insertForm').submit(function (e) {
+                e.preventDefault(); // Prevent the default form submission
+                var name = $('#name').val(); // Get the value of the name input field
+                var ID = $('#ID').val(); // Get the value of the ID input field
+                // AJAX Request to insert data into database
+                $.ajax({
+                    url: 'formInsert.html', // PHP script to handle insertion
+                    type: 'POST',
+                    data: { NAME: name, ID: ID }, // Combine both name and ID in a single object
+                    success: function (response) {
+                        // Clear the input fields
+                        $('#name').val('');
+                        $('#ID').val('');
+                        // Reload the records
+                        loadRecords();
+                    },
+                    error: function (xhr, status, error) {
+                        console.log(error); // Log any errors to the console
+                    }
+                });
+            });
+
+            //display the Records from Database
+            function loadRecords() {
+                $.ajax({
+                    url: 'getRecords.php', // PHP script to retrieve records from database
+                    type: 'GET',
+                    success: function (response) {
+                        $('#records').html(response); // Display the records in the #records div
+                    },
+                    error: function (xhr, status, error) {
+                    }
+                });
+            }
+
+            // Call loadRecords function initially to load records when the page loads
+            loadRecords();
+        });
+    </script>
+
+</body>
+
+</html>

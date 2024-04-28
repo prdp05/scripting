@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Todo List</title>
+    <script src="../jq.js"></script>
+</head>
+<body>
+    <h2>Todo List</h2>
+    <form id="todoForm">
+        <input type="text" id="todoInput" placeholder="Enter todo">
+        <button type="submit">Add Todo</button>
+    </form>
+    <ul id="todoList"></ul>
+
+    <script>
+        $(document).ready(function() {
+            loadTodos();
+
+            $('#todoForm').submit(function(e) {
+                e.preventDefault();
+                var todo = $('#todoInput').val();
+                $.ajax({
+                    url: 'addTodo.php',
+                    type: 'POST',
+                    data: { todo: todo },
+                    success: function() {
+                        loadTodos();
+                        $('#todoInput').val('');
+                    }
+                });
+            });
+
+            function loadTodos() {
+                $.ajax({
+                    url: 'getTodos.php',
+                    type: 'GET',
+                    success: function(response) {
+                        $('#todoList').html(response);
+                    }
+                });
+            }
+
+            $(document).on('click', '.deleteTodo', function() {
+                var id = $(this).data('id');
+                $.ajax({
+                    url: 'deleteTodo.php',
+                    type: 'POST',
+                    data: { id: id },
+                    success: function() {
+                        loadTodos();
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
